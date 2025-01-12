@@ -3,11 +3,12 @@ package rabbit
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/google/uuid"
-	amqp "github.com/rabbitmq/amqp091-go"
 	"log"
 	"os"
 	"rtt/data"
+
+	"github.com/google/uuid"
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 // this verbose functionality is copied from root.go to prevent cycles
@@ -107,4 +108,19 @@ func SendMessage(data data.InputQueue, queue amqp.Queue, channel *amqp.Channel) 
 		log.Fatalf("Unable to publish message in queue '%v': %v", queue.Name, err)
 	}
 	return msgId
+}
+
+func CreateConsumer(channel *amqp.Channel, queueInfo *data.RabbitQueue) <-chan amqp.Delivery {
+	msgs, err := channel.Consume(queueInfo.Name,
+		uuid.NewString(),
+		true, // autoAck sensible default?
+		queueInfo.Exclusive,
+		false, // noLocal unsupported by RabbitMQ
+		queueInfo.NoWait,
+		nil)
+	if err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, "cannot create consumer: %v", err)
+		os.Exit(1)
+	}
+	return msgs
 }

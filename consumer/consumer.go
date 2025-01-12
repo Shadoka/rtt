@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"maps"
-	"os"
 	"reflect"
 	"rtt/data"
+	"rtt/rabbit"
 	"slices"
 
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -25,25 +25,12 @@ func Init() {
 }
 
 func (consumer *ResponseConsumer) ListenForReplies(channel *amqp.Channel, notifyChannel chan data.ApplicationResult) {
-	msgs, err := channel.Consume(consumer.QueueInfo.Name,
-		"",
-		true,
-		false,
-		false,
-		false,
-		nil)
-	if err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "cannot create consumer: %v", err)
-		os.Exit(1)
-	}
+	msgs := rabbit.CreateConsumer(channel, &consumer.QueueInfo)
 
 	expectedIds := slices.Collect(maps.Keys(consumer.ExpectedMessages))
 	msgProcessingCount := 0
 	for msg := range msgs {
-		// NOTE: If the application has a reply queue of its own it may not be possible to 'reflect' the message id
-		currentExpectedIds := slices.DeleteFunc(expectedIds, func(expectedMessageId string) bool {
-			return msg.MessageId == expectedMessageId
-		})
+		currentExpectedIds := consumer.getUpdatedListOfRemainingMessages(expectedIds, msg.MessageId)
 
 		if len(currentExpectedIds) < len(expectedIds) {
 			expectedIds = currentExpectedIds
@@ -51,7 +38,7 @@ func (consumer *ResponseConsumer) ListenForReplies(channel *amqp.Channel, notify
 			appResult := data.ApplicationResult{}
 
 			var responseData map[string]interface{}
-			if err = json.Unmarshal(msg.Body, &responseData); err != nil {
+			if err := json.Unmarshal(msg.Body, &responseData); err != nil {
 				appResult.AssertionError = err
 				notifyChannel <- appResult
 				continue
@@ -76,6 +63,13 @@ func (consumer *ResponseConsumer) ListenForReplies(channel *amqp.Channel, notify
 			break
 		}
 	}
+}
+
+func (consumer *ResponseConsumer) getUpdatedListOfRemainingMessages(remainingMessageIds []string, incomingMessageId string) []string {
+	// NOTE: If the application has a reply queue of its own it may not be possible to 'reflect' the message id
+	return slices.DeleteFunc(remainingMessageIds, func(expectedMessageId string) bool {
+		return incomingMessageId == expectedMessageId
+	})
 }
 
 func printMap(currentMap map[string]interface{}) {
