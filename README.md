@@ -12,8 +12,8 @@ Additionally, if the consumer responds with a reply message it is possible to de
 
 The general connection information (credentials & rabbit connection data) are defined in a file called [setup.json](examples/setup.json). This file can also define the whole topology of the rabbit infrastructure and should be referenced from each rtt test file. This has the advantage of not duplicating the credentials for each test and also to create the rabbit topology independent of the execution of a test file.
 
-[!NOTE]
-Currently `rtt` only supports a deep equals on the whole message body, which is not useful if the response message contains variable data like a current timestamp. It is planned to support an assert syntax to write more meaningful tests.
+> [!NOTE]
+> Currently `rtt` only supports a deep equals on the whole message body, which is not useful if the response message contains variable data like a current timestamp. It is planned to support an assert syntax to write more meaningful tests.
 
 [!NOTE]
 For now you have to use the example files to learn how to write the rtt test files. It is planned to write a syntax definition, but I have to refresh my memory how to best approach this first.
