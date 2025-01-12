@@ -1,0 +1,31 @@
+{
+  "name": "test a",
+  "connectionFile": "../setup.json",
+  "inputQueue": {
+    "queue": {
+      "exchange": "addition.direct",
+      "key": "with-reply",
+      "name": "addition",
+      "schema": "../schemas/example-schema.schema.json"
+    },
+    "data": {
+      "firstNumber": 20.0,
+      "thirdNumber": 22.0,
+      "requestId": "3e4666bf-d5e5-4aa7-b8ce-cefe41c7568a"
+    }
+  },
+  "responseQueue": {
+    "queue": {
+      "exchange": "addition-reply",
+      "key": "#",
+      "name": "reply",
+      "schema": "../schemas/example-output-schema.schema.json"
+    },
+    "response": {
+      "data": {
+        "result": 42.0,
+        "requestId": "3e4666bf-d5e5-4aa7-b8ce-cefe41c7568a"
+      }
+    }
+  }
+}

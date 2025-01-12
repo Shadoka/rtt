@@ -1,0 +1,17 @@
+{
+  "name": "test b",
+  "connectionFile": "../setup.json",
+  "inputQueue": {
+    "queue": {
+      "exchange": "addition.direct",
+      "key": "without-reply",
+      "name": "addition-no-reply",
+      "schema": "../schemas/example-schema.schema.json"
+    },
+    "data": {
+      "firstNumber": 10.0,
+      "secondNumber": 13.0,
+      "requestId": "3e4666bf-d5e5-4aa7-b8ce-cefe41c7568a"
+    }
+  }
+}

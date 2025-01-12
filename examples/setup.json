@@ -1,0 +1,33 @@
+{
+  "exchanges": [
+    {
+      "name": "addition.direct"
+    },
+    {
+      "name": "addition-reply"
+    }
+  ],
+  "queues": [
+    {
+      "exchange": "addition.direct",
+      "key": "with-reply",
+      "name": "addition"
+    },
+    {
+      "exchange": "addition.direct",
+      "key": "without-reply",
+      "name": "addition-no-reply"
+    },
+    {
+      "exchange": "addition-reply",
+      "key": "#",
+      "name": "reply"
+    }
+  ],
+  "connection": {
+    "host": "localhost",
+    "port": "5672",
+    "user": "guest",
+    "password": "guest"
+  }
+}

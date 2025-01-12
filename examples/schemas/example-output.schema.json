@@ -1,0 +1,28 @@
+{
+    "$id": "https://example.com/example.schema.json",
+    "$schema": "https://json-schema.org/schema#",
+    "title": "Example output schema",
+    "version": "1.0.0",
+    "description": "This is an example schema",
+    "type": "object",
+    "definitions": {
+      "requestId": {
+        "type": "string",
+        "format": "uuid",
+        "example": "3e4666bf-d5e5-4aa7-b8ce-cefe41c7568a"
+      }
+    },
+    "properties": {
+      "result": {
+        "type": "number"
+      },
+      "requestId": {
+        "$ref": "#/definitions/requestId"
+      }
+    },
+    "required": [
+      "result",
+      "requestId"
+    ]
+  }
+  
