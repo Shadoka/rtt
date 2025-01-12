@@ -15,14 +15,14 @@ The general connection information (credentials & rabbit connection data) are de
 > [!NOTE]
 > Currently `rtt` only supports a deep equals on the whole message body, which is not useful if the response message contains variable data like a current timestamp. It is planned to support an assert syntax to write more meaningful tests.
 
-[!NOTE]
-For now you have to use the example files to learn how to write the rtt test files. It is planned to write a syntax definition, but I have to refresh my memory how to best approach this first.
+> [!NOTE]
+> For now you have to use the example files to learn how to write the rtt test files. It is planned to write a syntax definition, but I have to refresh my memory how to best approach this first.
 
-[!NOTE]
-Some queue configuration options in rtt files are missing at the moment, but it is planned to complete this asap.
+> [!NOTE]
+> Some queue configuration options in rtt files are missing at the moment, but it is planned to complete this asap.
 
-[!NOTE]
-To match responses to messages we have sent via `rtt`, the tool currently assumes that the message id of the outgoing message is reflected into the message id of the incoming message. This is not realistic and will be changed.
+> [!NOTE]
+> To match responses to messages we have sent via `rtt`, the tool currently assumes that the message id of the outgoing message is reflected into the message id of the incoming message. This is not realistic and will be changed.
 
 ## Usage
 
@@ -78,8 +78,8 @@ rtt setup examples/setup.json
 ```
 
 This command is idempotent, so you can run this as many times as you want without breaking things.
-[!NOTE]
-This setup is done automatically when you execute a file or directory with `rtt run`. So there is no need to manually run it beforehand.
+> [!NOTE]
+> This setup is done automatically when you execute a file or directory with `rtt run`. So there is no need to manually run it beforehand.
 
 ## Build
 
