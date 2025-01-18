@@ -19,9 +19,6 @@ The general connection information (credentials & rabbit connection data) are de
 > For now you have to use the example files to learn how to write the rtt test files. It is planned to write a syntax definition, but I have to refresh my memory how to best approach this first.
 
 > [!NOTE]
-> Some queue configuration options in rtt files are missing at the moment, but it is planned to complete this asap.
-
-> [!NOTE]
 > To match responses to messages we have sent via `rtt`, the tool currently assumes that the message id of the outgoing message is reflected into the message id of the incoming message. This is not realistic and will be changed.
 
 ## Usage
@@ -86,4 +83,19 @@ This command is idempotent, so you can run this as many times as you want withou
 ```sh
 go get
 go build
+```
+
+## Examples
+
+### Creating a queue with additional arguments
+
+```json
+{
+    "exchange": "exampleExchange",
+    "key": "test1",
+    "name": "example1",
+    "amqpTable": {
+        "x-queue-type": "quorum"
+    }
+}
 ```

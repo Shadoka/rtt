@@ -27,13 +27,14 @@ type Connection struct {
 }
 
 type RabbitExchange struct {
-	Name       string `json:"name"`
-	Kind       string `json:"kind"`
-	Durable    bool   `json:"durable"`
-	AutoDelete bool   `json:"autoDelete"`
-	Exclusive  bool   `json:"exclusive"`
-	NoWait     bool   `json:"noWait"`
-	Internal   bool   `json:"internal"`
+	Name       string                 `json:"name"`
+	Kind       string                 `json:"kind"`
+	Durable    bool                   `json:"durable"`
+	AutoDelete bool                   `json:"autoDelete"`
+	Exclusive  bool                   `json:"exclusive"`
+	NoWait     bool                   `json:"noWait"`
+	Internal   bool                   `json:"internal"`
+	AmqpTable  map[string]interface{} `json:"amqpTable"`
 }
 
 func (re *RabbitExchange) UnmarshalJSON(text []byte) error {
@@ -46,6 +47,7 @@ func (re *RabbitExchange) UnmarshalJSON(text []byte) error {
 		Exclusive:  false,
 		NoWait:     false,
 		Internal:   false,
+		AmqpTable:  nil,
 	}
 
 	if err := json.Unmarshal(text, &opts); err != nil {
@@ -57,14 +59,15 @@ func (re *RabbitExchange) UnmarshalJSON(text []byte) error {
 }
 
 type RabbitQueue struct {
-	Name       string `json:"name"`
-	Key        string `json:"key"`
-	Exchange   string `json:"exchange"`
-	Schema     string `json:"schema"`
-	Durable    bool   `json:"durable"`
-	AutoDelete bool   `json:"autoDelete"`
-	Exclusive  bool   `json:"exclusive"`
-	NoWait     bool   `json:"noWait"`
+	Name       string                 `json:"name"`
+	Key        string                 `json:"key"`
+	Exchange   string                 `json:"exchange"`
+	Schema     string                 `json:"schema"`
+	Durable    bool                   `json:"durable"`
+	AutoDelete bool                   `json:"autoDelete"`
+	Exclusive  bool                   `json:"exclusive"`
+	NoWait     bool                   `json:"noWait"`
+	AmqpTable  map[string]interface{} `json:"amqpTable"`
 }
 
 func (rq *RabbitQueue) UnmarshalJSON(text []byte) error {
@@ -75,6 +78,7 @@ func (rq *RabbitQueue) UnmarshalJSON(text []byte) error {
 		AutoDelete: false,
 		Exclusive:  false,
 		NoWait:     false,
+		AmqpTable:  nil,
 	}
 
 	if err := json.Unmarshal(text, &opts); err != nil {

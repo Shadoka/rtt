@@ -22,6 +22,14 @@
       "exchange": "addition-reply",
       "key": "#",
       "name": "reply"
+    },
+    {
+      "exchange": "addition-reply",
+      "key": "test1",
+      "name": "example1",
+      "amqpTable": {
+        "x-queue-type": "quorum"
+      }
     }
   ],
   "connection": {

@@ -48,7 +48,7 @@ func DeclareQueue(queueInfo *data.RabbitQueue, ch *amqp.Channel) amqp.Queue {
 		queueInfo.AutoDelete,
 		queueInfo.Exclusive,
 		queueInfo.NoWait,
-		nil)
+		queueInfo.AmqpTable)
 	if err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "Unable to get or create queue: %v", err)
 		os.Exit(1)
@@ -81,7 +81,7 @@ func DeclareExchange(exchangeInfo data.RabbitExchange, ch *amqp.Channel) {
 		exchangeInfo.AutoDelete,
 		exchangeInfo.Internal,
 		exchangeInfo.NoWait,
-		nil)
+		exchangeInfo.AmqpTable)
 	if err != nil {
 		log.Fatalf("unable to create exchange '%v': %v", exchangeInfo.Name, err)
 	}
