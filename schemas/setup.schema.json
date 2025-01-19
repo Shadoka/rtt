@@ -1,0 +1,75 @@
+{
+    "$id": "https://example.com/example.schema.json",
+    "$schema": "https://json-schema.org/schema#",
+    "title": "Schema for rtt setup files",
+    "version": "1.0.0",
+    "description": "For more information visit https://github.com/Shadoka/rtt",
+    "type": "object",
+    "definitions": {
+        "exchange": {
+            "type": "object",
+            "properties": {
+                "name": { "type": "string" },
+                "kind": { "type": "string" },
+                "durable": { "type": "boolean" },
+                "autoDelete": { "type": "boolean" },
+                "exclusive": { "type": "boolean" },
+                "noWait": { "type": "boolean" },
+                "internal": { "type": "boolean" },
+                "amqpTable": { "type": "object" }
+            },
+            "required": [
+                "name"
+            ]
+        },
+        "queue": {
+            "type": "object",
+            "properties": {
+                "name": { "type": "string" },
+                "key": { "type": "string" },
+                "exchange": { "type": "string" },
+                "schema": { "type": "string" },
+                "durable": { "type": "boolean" },
+                "autoDelete": { "type": "boolean" },
+                "exclusive": { "type": "boolean" },
+                "noWait": { "type": "boolean" },
+                "amqpTable": { "type": "object" }
+            },
+            "required": [
+                "name",
+                "key",
+                "exchange"
+            ]
+        },
+        "connection": {
+            "type": "object",
+            "properties": {
+                "host": { "type": "string" },
+                "port": { "type": "string" },
+                "user": { "type": "string" },
+                "password": { "type": "string" }
+            },
+            "required": [
+                "host",
+                "port",
+                "user",
+                "password"
+            ]
+        }
+    },
+    "properties": {
+        "exchanges": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/exchange" }
+        },
+        "queues": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/queue" }
+        },
+        "connection": { "$ref": "#/definitions/connection" }
+    },
+    "required": [
+      "connection"
+    ]
+  }
+  

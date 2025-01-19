@@ -1,0 +1,71 @@
+{
+    "$id": "https://example.com/example.schema.json",
+    "$schema": "https://json-schema.org/schema#",
+    "title": "Schema for rtt files",
+    "version": "1.0.0",
+    "description": "For more information visit https://github.com/Shadoka/rtt",
+    "type": "object",
+    "definitions": {
+        "queue": {
+            "type": "object",
+            "properties": {
+                "name": { "type": "string" },
+                "key": { "type": "string" },
+                "exchange": { "type": "string" },
+                "schema": { "type": "string" },
+                "durable": { "type": "boolean" },
+                "autoDelete": { "type": "boolean" },
+                "exclusive": { "type": "boolean" },
+                "noWait": { "type": "boolean" },
+                "amqpTable": { "type": "object" }
+            },
+            "required": [
+                "name",
+                "key",
+                "exchange"
+            ]
+        },
+        "inputQueue": {
+            "type": "object",
+            "properties": {
+                "queue": { "$ref": "#/definitions/queue" },
+                "data": { "type": "object" }
+            },
+            "required": [
+                "queue",
+                "data"
+            ]
+        },
+        "response": {
+            "type": "object",
+            "properties": {
+                "data": { "type": "object" }
+            },
+            "required": [
+                "data"
+            ]
+        },
+        "responseQueue": {
+            "type": "object",
+            "properties": {
+                "queue": { "$ref": "#/definitions/queue" },
+                "response": { "$ref": "#/definitions/response" }
+            },
+            "required": [
+                "queue"
+            ]
+        }
+    },
+    "properties": {
+        "name": { "type": "string" },
+        "connectionFile": { "type": "string" },
+        "inputQueue": { "$ref": "#/definitions/inputQueue" },
+        "responseQueue": { "$ref": "#/definitions/responseQueue" }
+    },
+    "required": [
+      "name",
+      "connectionFile",
+      "inputQueue"
+    ]
+  }
+  

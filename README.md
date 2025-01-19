@@ -16,9 +16,6 @@ The general connection information (credentials & rabbit connection data) are de
 > Currently `rtt` only supports a deep equals on the whole message body, which is not useful if the response message contains variable data like a current timestamp. It is planned to support an assert syntax to write more meaningful tests.
 
 > [!NOTE]
-> For now you have to use the example files to learn how to write the rtt test files. It is planned to write a syntax definition, but I have to refresh my memory how to best approach this first.
-
-> [!NOTE]
 > To match responses to messages we have sent via `rtt`, the tool currently assumes that the message id of the outgoing message is reflected into the message id of the incoming message. This is not realistic and will be changed.
 
 ## Usage
@@ -84,6 +81,20 @@ This command is idempotent, so you can run this as many times as you want withou
 go get
 go build
 ```
+
+## File structures
+
+`rtt` handles two different configuration files, both written in json. One type is the `setup` file, that handles the rabbit topology and connection data.
+You can find [an example here](examples/setup.json) and [the json schema file here](schemas/setup.schema.json).
+
+The other type of file is the `rtt` file itself, where test messages and data are defined.
+You can find multiple examples in this project: [with response message](examples/testA/testA.json) and [without response message](examples/testC.json).
+The json schema is defined [here](schemas/rttfile.schema.json).
+
+All those files are validated against the linked schema files before executing them, so the user can (hopefully) receive meaningful error messages in case the files are not valid.
+
+> [!NOTE]
+> The files are only validated **syntactically**. If (for example) an exchange is referenced in a queue that is not defined in the setup file, the app won't catch that before executing.
 
 ## Examples
 

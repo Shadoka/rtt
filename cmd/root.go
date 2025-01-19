@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"rtt/rttio"
+	"rtt/schemas"
 
 	"github.com/spf13/cobra"
 )
@@ -37,6 +38,7 @@ func Execute() {
 func init() {
 	rootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "Generate verbose output")
 	rttio.Init()
+	schemas.Init()
 }
 
 func VerbosePrintln(text string) {

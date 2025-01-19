@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"rtt/data"
+	"rtt/schemas"
 	"strings"
 )
 
@@ -29,6 +30,8 @@ func LoadFile(filename string) data.RttFile {
 
 	byteResult, _ := io.ReadAll(fileContent)
 
+	validateInternalFile(byteResult, schemas.RTT_FILE_SCHEMA_URL)
+
 	var rttFile data.RttFile
 	if err = json.Unmarshal(byteResult, &rttFile); err != nil {
 		log.Fatal(err)
@@ -46,12 +49,36 @@ func LoadSetupFile(filename string) data.SetupFile {
 
 	byteResult, _ := io.ReadAll(fileContent)
 
+	validateInternalFile(byteResult, schemas.SETUP_SCHEMA_URL)
+
 	var setupFile data.SetupFile
 	if err = json.Unmarshal(byteResult, &setupFile); err != nil {
 		log.Fatal(err)
 	}
 
 	return setupFile
+}
+
+// See schemas.go for valid schemas
+func validateInternalFile(fileContent []byte, validationSchema string) {
+	schema, err := schemas.RttValidator.Compile(validationSchema)
+	if err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, "Unable to parse json schema file: %v\n", err)
+		os.Exit(1)
+	}
+
+	var v interface{}
+	err = json.Unmarshal(fileContent, &v)
+	if err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, "Unable to unmarshal json data: %v\n", err)
+		os.Exit(1)
+	}
+
+	err = schema.Validate(v)
+	if err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, "error validating file: %v\n", err)
+		os.Exit(1)
+	}
 }
 
 func GetConnectionDataFromRttFile(path string) data.Connection {
