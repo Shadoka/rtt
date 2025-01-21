@@ -76,7 +76,7 @@ func validateInternalFile(fileContent []byte, validationSchema string) {
 
 	err = schema.Validate(v)
 	if err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "error validating file: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "Error validating file: %v\n", err)
 		os.Exit(1)
 	}
 }

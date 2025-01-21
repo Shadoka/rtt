@@ -75,6 +75,22 @@ This command is idempotent, so you can run this as many times as you want withou
 > [!NOTE]
 > This setup is done automatically when you execute a file or directory with `rtt run`. So there is no need to manually run it beforehand.
 
+### Purging messages
+
+`rtt` can also purge messages from either a specific queue (defined in a `setup.json`) or from all queues that are defined in a `setup.json`.
+
+To purge messages from one queue you have to specify the queue name with either `-q` or `--queue`:
+
+```sh
+rtt purge examples/setup.json -q addition-no-reply
+```
+
+To purge all messages from all queues just execute the purge command:
+
+```sh
+rtt purge examples/setup.json
+```
+
 ## Build
 
 ```sh

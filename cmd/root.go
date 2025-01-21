@@ -14,16 +14,11 @@ var Verbose bool
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "rtt",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	Short: "Tooling for testing/managing queues and queue processing applications",
+	Long: `rtt is designed to be a handy tool for working with RabbitMQ infrastructure and applications
+	processing messages out of RabbitMQ.
+	It can connect to rabbit instances, create rabbit queues/exchanges/topologies, purge messages from queues
+	and listen to response queues and match those responses to expectations.`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.

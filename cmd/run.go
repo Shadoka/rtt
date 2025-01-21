@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -11,6 +10,8 @@ import (
 	"rtt/rabbit"
 	"rtt/rttio"
 	"strings"
+
+	"github.com/spf13/cobra"
 )
 
 // runCmd represents the run command
@@ -80,7 +81,7 @@ func awaitReplies(connectionData data.Connection) {
 			// TODO: Print failure message
 		}
 
-		fmt.Println(fmt.Sprintf("Currently at %v of %v messages received", currentResponseCount, expectedResponseCount))
+		fmt.Printf("Currently at %v of %v messages received\n", currentResponseCount, expectedResponseCount)
 	}
 }
 
