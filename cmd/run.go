@@ -69,6 +69,8 @@ func awaitReplies(connectionData data.Connection) {
 		go replyConsumer.ListenForReplies(channel, responseChannel)
 	}
 
+	fmt.Println("======= AWAITNG RESPONSE MESSAGES  =======")
+
 	for currentResponseCount < expectedResponseCount {
 		currentResponse := <-responseChannel
 		if currentResponse.AssertionError == nil {
@@ -111,6 +113,7 @@ func isPotentialTestFile(path string, d fs.DirEntry) bool {
 }
 
 func runFile(filename string) data.ValidationResult {
+	// TODO: refactor method to make it more concise
 	rttFile := rttio.LoadFile(filename)
 	VerbosePrintln("Successfully loaded rtt file")
 	validationResult := data.ValidationResult{
@@ -140,14 +143,15 @@ func runFile(filename string) data.ValidationResult {
 	defer channel.Close()
 	VerbosePrintln("Successfully created rabbitmq channel")
 
-	inputQueue := rabbit.DeclareQueue(&rttFile.InputQueue.Queue, channel)
-	VerbosePrintln(fmt.Sprintf("Connected to rabbit queue '%v'", inputQueue.Name))
+	_ = rabbit.DeclareQueue(&rttFile.InputQueue.Queue, channel)
+	VerbosePrintln(fmt.Sprintf("Connected to rabbit queue '%v'", rttFile.InputQueue.Queue.Name))
 
-	msgId := rabbit.SendMessage(rttFile.InputQueue, inputQueue, channel)
+	rabbit.SendMessage(rttFile.InputQueue, channel)
 	VerbosePrintln("Successfully sent message to rabbit mq")
 
 	if rttFile.ResponseQueue.Queue.Name != "" {
 		VerbosePrintln(fmt.Sprintf("response queue: '%v'\n", rttFile.ResponseQueue.Queue.Name))
+		msgId := consumer.CreateMessageIdFromResponse(&rttFile.ResponseQueue.Response)
 		consumer.AddResponse(msgId, rttFile.ResponseQueue)
 	}
 

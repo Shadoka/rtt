@@ -88,7 +88,7 @@ func DeclareExchange(exchangeInfo data.RabbitExchange, ch *amqp.Channel) {
 	VerbosePrintln(fmt.Sprintf("Successfully created exchange with name '%v'", exchangeInfo.Name))
 }
 
-func SendMessage(data data.InputQueue, queue amqp.Queue, channel *amqp.Channel) string {
+func SendMessage(data data.InputQueue, channel *amqp.Channel) {
 	msgPayload, err := json.Marshal(data.Data)
 	if err != nil {
 		log.Fatalf("Unable to create message payload: %v", err)
@@ -105,9 +105,8 @@ func SendMessage(data data.InputQueue, queue amqp.Queue, channel *amqp.Channel) 
 			MessageId:   msgId,
 		})
 	if err != nil {
-		log.Fatalf("Unable to publish message in queue '%v': %v", queue.Name, err)
+		log.Fatalf("Unable to publish message in queue '%v': %v", data.Queue.Name, err)
 	}
-	return msgId
 }
 
 func CreateConsumer(channel *amqp.Channel, queueInfo *data.RabbitQueue) <-chan amqp.Delivery {

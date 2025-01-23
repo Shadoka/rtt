@@ -102,7 +102,21 @@ type ResponseQueue struct {
 }
 
 type Response struct {
-	//Status  string                 `json:"status"`
-	//Message string                 `json:"message"`
-	Data map[string]interface{} `json:"data"`
+	Identifier map[string]interface{}   `json:"identifier"`
+	Assertions []map[string]interface{} `json:"assertions"`
+}
+
+func (r *Response) UnmarshalJSON(text []byte) error {
+	type defaults Response
+
+	opts := defaults{
+		Assertions: make([]map[string]interface{}, 0),
+	}
+
+	if err := json.Unmarshal(text, &opts); err != nil {
+		return err
+	}
+
+	*r = Response(opts)
+	return nil
 }

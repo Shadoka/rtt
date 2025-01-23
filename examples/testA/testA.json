@@ -22,10 +22,17 @@
       "schema": "../schemas/example-output-schema.schema.json"
     },
     "response": {
-      "data": {
-        "result": 42.0,
+      "identifier": {
         "requestId": "3e4666bf-d5e5-4aa7-b8ce-cefe41c7568a"
-      }
+      },
+      "assertions": [
+        { 
+          "result": 42.0
+        },
+        {
+          "foo": "bar" 
+        }
+      ]
     }
   }
 }
