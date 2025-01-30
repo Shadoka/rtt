@@ -1,0 +1,34 @@
+{
+    "$id": "https://example.com/example.schema.json",
+    "$schema": "https://json-schema.org/schema#",
+    "title": "Example schema",
+    "version": "1.0.0",
+    "description": "This is an example schema",
+    "type": "object",
+    "definitions": {
+      "requestId": {
+        "type": "string",
+        "format": "uuid",
+        "example": "3e4666bf-d5e5-4aa7-b8ce-cefe41c7568a"
+      }
+    },
+    "properties": {
+      "firstName": { "type": "string" },
+      "lastName": { "type": "string" },
+      "city": { "type": "string" },
+      "street": { "type": "string" },
+      "zipcode": { "type": "string" },
+      "requestId": {
+        "$ref": "#/definitions/requestId"
+      }
+    },
+    "required": [
+      "firstName",
+      "lastName",
+      "city",
+      "street",
+      "zipcode",
+      "requestId"
+    ]
+  }
+  

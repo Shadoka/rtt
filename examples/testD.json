@@ -1,0 +1,50 @@
+{
+    "name": "test d",
+    "connectionFile": "setup.json",
+    "inputQueue": {
+      "queue": {
+        "exchange": "personal-info",
+        "key": "flat",
+        "name": "personal-info-flat",
+        "schema": "schemas/example-personalinfo.schema.json"
+      },
+      "data": {
+        "firstName": "John",
+        "lastName": "Doe",
+        "city": "Baltimore",
+        "street": "Main Street",
+        "zipcode": "21201",
+        "requestId": "3e4666bf-d5e5-4aa7-b8ce-cefe41c7568a"
+      }
+    },
+    "responseQueue": {
+      "queue": {
+        "exchange": "personal-info",
+        "key": "structured",
+        "name": "personal-info-structured"
+      },
+      "response": {
+        "identifier": {
+          "requestId": "3e4666bf-d5e5-4aa7-b8ce-cefe41c7568a"
+        },
+        "assertions": [
+          { 
+            "firstName": "John"
+          },
+          {
+            "lastName": "Doe" 
+          },
+          {
+            "address": {
+                "city": "Baltimore",
+                "street": "Main Street",
+                "zipcode": "21201"
+            }
+          },
+          {
+            "metaData.serviceData.serviceName": "rabbit-example-consumer"
+          }
+        ]
+      }
+    }
+  }

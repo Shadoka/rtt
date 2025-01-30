@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"maps"
+	"reflect"
 	"rtt/data"
 	"rtt/rabbit"
 	"slices"
+	"strings"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 )
@@ -88,11 +90,6 @@ func CreateMessageIdFromResponse(response *data.Response) MessageId {
 	return msgId
 }
 
-type MessageId struct {
-	IdName  string
-	IdValue string
-}
-
 func GetMaxReplyCount() int {
 	result := 0
 
@@ -123,15 +120,52 @@ func (consumer *ResponseConsumer) matchesAnyExpectedMessage(messageData map[stri
 func assertExpectationToResponse(expectation map[string]interface{}, actualData map[string]interface{}) AssertionResult {
 	// TODO: print out information about failures
 	fieldName := slices.Collect(maps.Keys(expectation))
-	value, found := actualData[fieldName[0]]
+	value, found := findField(fieldName[0], actualData)
 	if found {
-		if value == expectation[fieldName[0]] {
+		if reflect.DeepEqual(value, expectation[fieldName[0]]) {
 			return SUCCESS
 		} else {
 			return MISMATCHED_EXPECTATION
 		}
 	}
 	return NO_SUCH_FIELD
+}
+
+func findField(expectedFieldName string, actualData map[string]interface{}) (interface{}, bool) {
+	// TODO: Constant for "."
+	nestedKeys := strings.Split(expectedFieldName, ".")
+	var fieldValue interface{}
+	var found bool
+	if len(nestedKeys) == 1 {
+		fieldValue, found = actualData[expectedFieldName]
+	} else {
+		fieldValue, found = findNestedField(nestedKeys, actualData)
+	}
+	return fieldValue, found
+}
+
+func findNestedField(nestedKeys []string, messageData map[string]interface{}) (interface{}, bool) {
+	var currentSelection map[string]interface{} = messageData
+	lastKeyIndex := len(nestedKeys) - 1
+	for i, v := range nestedKeys {
+		if i != lastKeyIndex {
+			// navigate down the json path
+			currentNavigationObject := currentSelection[v]
+			if currentNavigationObject == nil {
+				return nil, false
+			} else {
+				currentSelection = currentNavigationObject.(map[string]interface{})
+			}
+		} else {
+			// we are at the level we expect to find the test data
+			var fieldValue interface{}
+			var found bool
+			fieldValue, found = currentSelection[v]
+			return fieldValue, found
+		}
+	}
+
+	return nil, false
 }
 
 type AssertionResult int
@@ -141,3 +175,8 @@ const (
 	NO_SUCH_FIELD
 	MISMATCHED_EXPECTATION
 )
+
+type MessageId struct {
+	IdName  string
+	IdValue string
+}

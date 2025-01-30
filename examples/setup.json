@@ -5,6 +5,9 @@
     },
     {
       "name": "addition-reply"
+    },
+    {
+      "name": "personal-info"
     }
   ],
   "queues": [
@@ -30,6 +33,16 @@
       "amqpTable": {
         "x-queue-type": "quorum"
       }
+    },
+    {
+      "exchange": "personal-info",
+      "key": "flat",
+      "name": "personal-info-flat"
+    },
+    {
+      "exchange": "personal-info",
+      "key": "structured",
+      "name": "personal-info-structured"
     }
   ],
   "connection": {
