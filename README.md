@@ -31,6 +31,12 @@ You can also execute a directory of test files.
 rtt run examples/
 ```
 
+`rtt` waits 5 seconds by default for expected response messages. You can tweak that timeout duration by -t (duration in seconds)
+
+```sh
+rtt run examples/ -t 2
+```
+
 ### Validating message data
 
 If you receive new schema definitions you might want to check if your old message data is still valid first.
