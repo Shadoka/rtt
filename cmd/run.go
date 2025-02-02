@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"io/fs"
 	"os"
@@ -10,9 +11,13 @@ import (
 	"rtt/rabbit"
 	"rtt/rttio"
 	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 )
+
+// how long to wait for replies in seconds
+var ReplyWaitTime int
 
 // runCmd represents the run command
 var runCmd = &cobra.Command{
@@ -20,7 +25,6 @@ var runCmd = &cobra.Command{
 	Short: "Executes either a single rtt file or traverses a directory",
 	Long:  `Executes either a single rtt file or traverses a directory`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// TODO: Purge all messages in response queues?
 		if len(args) == 0 {
 			_, _ = fmt.Fprintf(os.Stderr, "run command expects a file or directory as argument\n")
 			os.Exit(1)
@@ -65,25 +69,33 @@ func awaitReplies(connectionData data.Connection) {
 	channel := rabbit.GetChannel(con)
 	defer channel.Close()
 
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(ReplyWaitTime))
+	defer cancel()
+
 	for _, replyConsumer := range consumer.ReplyConsumers {
 		go replyConsumer.ListenForReplies(channel, responseChannel)
 	}
 
 	fmt.Println("======= AWAITNG RESPONSE MESSAGES  =======")
 
+responseLoop:
 	for currentResponseCount < expectedResponseCount {
-		currentResponse := <-responseChannel
-		if currentResponse.AssertionError == nil {
-			successfulResponses++
-			currentResponseCount++
-			// TODO: Print success message
-		} else {
-			fmt.Printf("%v\n", currentResponse.AssertionError)
-			failedResponses++
-			// TODO: Print failure message
+		select {
+		case <-ctx.Done():
+			fmt.Println("Reply timeout reached, aborting waiting for replies")
+			break responseLoop
+		case currentResponse := <-responseChannel:
+			if currentResponse.AssertionError == nil {
+				successfulResponses++
+				currentResponseCount++
+				// TODO: Print success message
+			} else {
+				fmt.Printf("%v\n", currentResponse.AssertionError)
+				failedResponses++
+				// TODO: Print failure message
+			}
+			fmt.Printf("Currently at %v of %v messages received\n", currentResponseCount, expectedResponseCount)
 		}
-
-		fmt.Printf("Currently at %v of %v messages received\n", currentResponseCount, expectedResponseCount)
 	}
 }
 
@@ -171,4 +183,5 @@ func SetupRabbit(dirName string) data.Connection {
 
 func init() {
 	rootCmd.AddCommand(runCmd)
+	runCmd.Flags().IntVarP(&ReplyWaitTime, "timeout", "t", 5, "Timeout in seconds for how long to wait for replies")
 }
