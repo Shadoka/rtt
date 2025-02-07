@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"rtt/data"
 	"rtt/rabbit"
+	"rtt/rttio"
 	"slices"
 	"strings"
 
@@ -16,26 +17,30 @@ import (
 // ReplyConsumers is a map of queue name -> ResponseConsumer
 var ReplyConsumers map[string]*ResponseConsumer
 
+type ExpectedMessage struct {
+	TestName    string
+	MessageData data.Response
+}
+
 type ResponseConsumer struct {
 	QueueInfo        data.RabbitQueue
-	ExpectedMessages map[MessageId]data.Response
+	ExpectedMessages map[MessageId]ExpectedMessage
 }
 
 func Init() {
 	ReplyConsumers = make(map[string]*ResponseConsumer)
 }
 
-func (consumer *ResponseConsumer) ListenForReplies(channel *amqp.Channel, notifyChannel chan data.ApplicationResult) {
+func (consumer *ResponseConsumer) ListenForReplies(channel *amqp.Channel, notifyChannel chan data.ConsumerResult) {
 	msgs := rabbit.CreateConsumer(channel, &consumer.QueueInfo)
+	consumerResult := data.ConsumerResult{}
+	consumerResult.ConsumerQueue = consumer.QueueInfo.Name
 
 	for msg := range msgs {
-		appResult := data.ApplicationResult{}
-
 		// deserialize response data
 		var responseData map[string]interface{}
 		if err := json.Unmarshal(msg.Body, &responseData); err != nil {
-			appResult.AssertionError = err
-			notifyChannel <- appResult
+			consumerResult.AssertionError = err
 			continue
 		}
 
@@ -45,37 +50,42 @@ func (consumer *ResponseConsumer) ListenForReplies(channel *amqp.Channel, notify
 		if hasMatch {
 			expectedMessage := consumer.ExpectedMessages[*matchedMsgId]
 
-			for _, assertion := range expectedMessage.Assertions {
-				assertionResult := assertExpectationToResponse(assertion, responseData)
-
-				if assertionResult != SUCCESS {
-					assertionErr := fmt.Errorf("assertion error when comparing received message with expected message")
-					appResult.AssertionError = assertionErr
+			for _, assertion := range expectedMessage.MessageData.Assertions {
+				if assertionErr := assert(assertion, responseData, expectedMessage.TestName); assertionErr != nil {
+					consumerResult.AssertionError = assertionErr
 				}
 			}
 			delete(consumer.ExpectedMessages, *matchedMsgId)
 		} else {
 			unexpectedMsgErr := fmt.Errorf("received an unexpected response message")
-			appResult = data.ApplicationResult{AssertionError: unexpectedMsgErr}
+			consumerResult = data.ConsumerResult{
+				AssertionError: unexpectedMsgErr,
+			}
 		}
 
-		notifyChannel <- appResult
 		if len(consumer.ExpectedMessages) == 0 {
 			break
 		}
 	}
+	notifyChannel <- consumerResult
 }
 
-func AddResponse(msgId MessageId, consumerData data.ResponseQueue) {
+func AddResponse(msgId MessageId, consumerData data.ResponseQueue, testName string) {
 	if ReplyConsumers[consumerData.Queue.Name] == nil {
 		ReplyConsumers[consumerData.Queue.Name] = &ResponseConsumer{
-			ExpectedMessages: map[MessageId]data.Response{
-				msgId: consumerData.Response,
+			ExpectedMessages: map[MessageId]ExpectedMessage{
+				msgId: ExpectedMessage{
+					TestName:    testName,
+					MessageData: consumerData.Response,
+				},
 			},
 			QueueInfo: consumerData.Queue,
 		}
 	} else {
-		ReplyConsumers[consumerData.Queue.Name].ExpectedMessages[msgId] = consumerData.Response
+		ReplyConsumers[consumerData.Queue.Name].ExpectedMessages[msgId] = ExpectedMessage{
+			TestName:    testName,
+			MessageData: consumerData.Response,
+		}
 	}
 }
 
@@ -104,6 +114,26 @@ func printMap(currentMap map[string]interface{}) {
 	for k, v := range currentMap {
 		fmt.Printf("key: %v, value: %v\n", k, v)
 	}
+}
+
+func assert(assertion map[string]interface{}, responseData map[string]interface{}, testName string) error {
+	assertionMessage := createAssertionMessage(assertion, testName)
+	assertionResult := assertExpectationToResponse(assertion, responseData)
+
+	if assertionResult != SUCCESS {
+		assertionErr := fmt.Errorf("assertion error when comparing received message with expected message")
+		rttio.PrintAssertionResult(assertionMessage, false)
+		return assertionErr
+	} else {
+		rttio.PrintAssertionResult(assertionMessage, true)
+	}
+	return nil
+}
+
+func createAssertionMessage(assertion map[string]interface{}, testName string) string {
+	keys := slices.Collect(maps.Keys(assertion))
+	value := assertion[keys[0]]
+	return fmt.Sprintf("(%v) %v: %v", testName, keys[0], value)
 }
 
 func (consumer *ResponseConsumer) matchesAnyExpectedMessage(messageData map[string]interface{}) (bool, *MessageId) {

@@ -58,8 +58,9 @@ var runCmd = &cobra.Command{
 }
 
 func awaitReplies(connectionData data.Connection) {
-	responseChannel := make(chan data.ApplicationResult)
-	expectedResponseCount := consumer.GetMaxReplyCount()
+	responseChannel := make(chan data.ConsumerResult)
+	//expectedResponseCount := consumer.GetMaxReplyCount()
+	expectedResponseCount := len(consumer.ReplyConsumers)
 	currentResponseCount := 0
 	successfulResponses := 0
 	failedResponses := 0
@@ -88,13 +89,11 @@ responseLoop:
 			if currentResponse.AssertionError == nil {
 				successfulResponses++
 				currentResponseCount++
-				// TODO: Print success message
 			} else {
-				fmt.Printf("%v\n", currentResponse.AssertionError)
 				failedResponses++
-				// TODO: Print failure message
 			}
-			fmt.Printf("Currently at %v of %v messages received\n", currentResponseCount, expectedResponseCount)
+			rttio.PrintConsumerResult(currentResponse)
+			// fmt.Printf("Currently at %v of %v messages received\n", currentResponseCount, expectedResponseCount)
 		}
 	}
 }
@@ -164,7 +163,7 @@ func runFile(filename string) data.ValidationResult {
 	if rttFile.ResponseQueue.Queue.Name != "" {
 		VerbosePrintln(fmt.Sprintf("response queue: '%v'\n", rttFile.ResponseQueue.Queue.Name))
 		msgId := consumer.CreateMessageIdFromResponse(&rttFile.ResponseQueue.Response)
-		consumer.AddResponse(msgId, rttFile.ResponseQueue)
+		consumer.AddResponse(msgId, rttFile.ResponseQueue, rttFile.Name)
 	}
 
 	return validationResult

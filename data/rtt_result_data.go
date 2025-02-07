@@ -1,7 +1,13 @@
 package data
 
-type ApplicationResult struct {
+type ConsumerResult struct {
+	ConsumerQueue  string
 	AssertionError error
+}
+
+type AssertionResult struct {
+	Success          bool
+	AssertionMessage string
 }
 
 type ValidationResult struct {

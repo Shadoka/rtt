@@ -114,7 +114,7 @@ type FileWalker[T HandleFileResult] interface {
 }
 
 type HandleFileResult interface {
-	data.ApplicationResult | data.ValidationResult
+	data.ConsumerResult | data.ValidationResult
 }
 
 func IsPotentialTestFile(path string, d fs.DirEntry) bool {
@@ -135,6 +135,22 @@ func PrintValidationResults() {
 			fmt.Printf("\t%vFAILURE%v\n", RED, RESET)
 			fmt.Printf("%v%v%v\n", RED, result.ValidationError, RESET)
 		}
+	}
+}
+
+func PrintAssertionResult(assertionMessage string, successful bool) {
+	if successful {
+		fmt.Printf("%v%v%v\n", GREEN, assertionMessage, RESET)
+	} else {
+		fmt.Printf("%v%v%v\n", RED, assertionMessage, RESET)
+	}
+}
+
+func PrintConsumerResult(consumerResult data.ConsumerResult) {
+	if consumerResult.AssertionError == nil {
+		fmt.Printf("%v%v%v%v\n", GREEN, "Successfully received all messages of queue ", consumerResult.ConsumerQueue, RESET)
+	} else {
+		fmt.Printf("%v%v%v%v%v\n", RED, "Queue '", consumerResult.ConsumerQueue, "' has either not received all expected messages or had assertion errors", RESET)
 	}
 }
 
