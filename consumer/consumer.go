@@ -74,7 +74,7 @@ func AddResponse(msgId MessageId, consumerData data.ResponseQueue, testName stri
 	if ReplyConsumers[consumerData.Queue.Name] == nil {
 		ReplyConsumers[consumerData.Queue.Name] = &ResponseConsumer{
 			ExpectedMessages: map[MessageId]ExpectedMessage{
-				msgId: ExpectedMessage{
+				msgId: {
 					TestName:    testName,
 					MessageData: consumerData.Response,
 				},

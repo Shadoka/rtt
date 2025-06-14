@@ -59,6 +59,51 @@ func LoadSetupFile(filename string) data.SetupFile {
 	return setupFile
 }
 
+func LoadConfigFile() data.ConfigFile {
+	fileName := RttConfigFile()
+	_, err := os.Stat(fileName)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fileContent, err := os.Open(fileName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer fileContent.Close()
+
+	byteResult, _ := io.ReadAll(fileContent)
+
+	var configFile data.ConfigFile
+	if err = json.Unmarshal(byteResult, &configFile); err != nil {
+		log.Fatal(err)
+	}
+
+	return configFile
+}
+
+func WriteConfigFile(config data.ConfigFile) {
+	fileName := RttConfigFile()
+	fileData, err := json.Marshal(config)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err = os.WriteFile(fileName, fileData, 0777); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func RttConfigDir() string {
+	homeDir, _ := os.UserHomeDir()
+	// TODO: create file with constants
+	return fmt.Sprintf("%v/%v", homeDir, ".rtt")
+}
+
+func RttConfigFile() string {
+	rttDir := RttConfigDir()
+	return fmt.Sprintf("%v/%v", rttDir, ".rttconf")
+}
+
 // See schemas.go for valid schemas
 func validateInternalFile(fileContent []byte, validationSchema string) {
 	schema, err := schemas.RttValidator.Compile(validationSchema)

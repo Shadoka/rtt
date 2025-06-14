@@ -17,6 +17,10 @@ type SetupFile struct {
 	Connection Connection       `json:"connection"`
 }
 
+type ConfigFile struct {
+	DefaultNamespaceSetup string `json:"defaultNamespaceSetup"`
+}
+
 // RABBIT STRUCTURES
 
 type Connection struct {
