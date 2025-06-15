@@ -1,10 +1,10 @@
-/*
-Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
 	"fmt"
+	"os"
+	"rtt/data"
+	"rtt/rttio"
 
 	"github.com/spf13/cobra"
 )
@@ -22,6 +22,18 @@ var namespaceCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Calling namespace by itself is not useful. Please use a subcommand")
 	},
+}
+
+func GetDefaultSetupFile() *data.SetupFile {
+	rttConfig := rttio.LoadConfigFile()
+
+	_, err := os.Stat(rttConfig.DefaultNamespaceSetup)
+	if err != nil {
+		return nil
+	}
+
+	setupFile := rttio.LoadSetupFile(rttConfig.DefaultNamespaceSetup)
+	return &setupFile
 }
 
 func init() {

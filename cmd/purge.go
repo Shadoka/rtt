@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var queueToPurge string
+var setupToUse string
 
 // TODO: duplicated from rttio
 const RESET = "\033[0m"
@@ -20,16 +20,18 @@ const GREEN = "\033[32m"
 // purgeCmd represents the purge command
 var purgeCmd = &cobra.Command{
 	Use:   "purge",
-	Short: "Purges all messages of one or all queues defined in a setup.json",
-	Long: `Purges all messages of one or all queues defined in a setup.json
-	You can select a specific queue with 'rtt purge setup.json -q <queueName>'.
-	If you don't select a specific queue all messages from all queues defined in the setup.json will be purged`,
+	Short: "Purges all messages of one or all queues defined in a setup.json (or default namespace)",
+	Long: `Purges all messages of one or all queues defined in a setup.json (or default namespace)
+	You can select a specific queue with 'rtt purge <queueName>'.
+	If you don't select a specific queue all messages from all queues defined in the namespace will be purged.
+	You can select a specific environment by using the -s parameter to give a path to a setup.json file`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) == 0 {
-			_, _ = fmt.Fprintf(os.Stderr, "purge command expects a setup.json file as argument\n")
-			os.Exit(1)
+		var setupFile string
+		if setupToUse != "" {
+			setupFile = setupToUse
+		} else {
+			setupFile = rttio.LoadConfigFile().DefaultNamespaceSetup
 		}
-		setupFile := args[0]
 
 		_, err := os.Stat(setupFile)
 		if err != nil {
@@ -37,11 +39,16 @@ var purgeCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		purgeMessages(setupFile)
+		var queueToPurge string
+		if len(args) != 0 {
+			queueToPurge = args[0]
+		}
+
+		purgeMessages(setupFile, queueToPurge)
 	},
 }
 
-func purgeMessages(setupFile string) {
+func purgeMessages(setupFile string, queueToPurge string) {
 	setupData := rttio.LoadSetupFile(setupFile)
 
 	conn := rabbit.Connect(setupData.Connection.Host, setupData.Connection.Port, setupData.Connection.User, setupData.Connection.Password)
@@ -84,5 +91,5 @@ func purgeMessagesFromQueues(queues []string, channel *amqp091.Channel) {
 
 func init() {
 	rootCmd.AddCommand(purgeCmd)
-	purgeCmd.Flags().StringVarP(&queueToPurge, "queue", "q", "", "Queue to purge all messages from")
+	purgeCmd.Flags().StringVarP(&setupToUse, "setup", "s", "", "Setup file to use for the connection")
 }

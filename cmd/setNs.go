@@ -10,6 +10,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const PURPLE = "\033[35m"
+
 // setCmd represents the set command
 var setCmd = &cobra.Command{
 	Use:   "set",
@@ -32,9 +34,19 @@ var setCmd = &cobra.Command{
 
 		rttConfig := data.ConfigFile{
 			DefaultNamespaceSetup: namespaceSetupFile,
+			DefaultNamespaceAlias: args[0],
+		}
+
+		var previousAlias string
+		if _, err = os.Stat(rttio.RttConfigFile()); err == nil {
+			previousAlias = rttio.LoadConfigFile().DefaultNamespaceAlias
 		}
 
 		rttio.WriteConfigFile(rttConfig)
+
+		if previousAlias != "" {
+			fmt.Printf("Switched from %v%v%v to %v%v%v", PURPLE, previousAlias, RESET, PURPLE, args[0], RESET)
+		}
 	},
 }
 

@@ -19,6 +19,7 @@ type SetupFile struct {
 
 type ConfigFile struct {
 	DefaultNamespaceSetup string `json:"defaultNamespaceSetup"`
+	DefaultNamespaceAlias string `json:"defaultNamespaceAlias"`
 }
 
 // RABBIT STRUCTURES
