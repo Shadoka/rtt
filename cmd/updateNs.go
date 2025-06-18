@@ -4,7 +4,7 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/spf13/cobra"
 )
@@ -12,28 +12,19 @@ import (
 // updateCmd represents the update command
 var updateNsCmd = &cobra.Command{
 	Use:   "update",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Updates a namespace with a new setup.json",
+	Long: `This command can be used to update the connection settings
+	of an already existing namespace.
+	Example: rtt namespace update <namespace> <setup.json>`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("update called")
+		if len(args) != 2 {
+			log.Fatal("namespace update needs two arguments: namespace and setup.json")
+		}
+
+		createNamespace(args[0], args[1])
 	},
 }
 
 func init() {
 	namespaceCmd.AddCommand(updateNsCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// updateCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// updateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

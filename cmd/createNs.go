@@ -26,35 +26,39 @@ var createCmd = &cobra.Command{
 		alias := args[0]
 		setupFile := args[1]
 
-		homeDir, err := os.UserHomeDir()
-		if err != nil {
-			log.Fatal(err)
-		}
-		rttDir := fmt.Sprintf("%v/%v", homeDir, RTT_DIR)
-		_, err = os.Stat(rttDir)
-		if err != nil {
-			os.Mkdir(rttDir, 0777)
-		}
-
-		namespaceDir := fmt.Sprintf("%v/%v", rttDir, alias)
-		err = os.Mkdir(namespaceDir, 0777)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		setupContent, err := os.ReadFile(setupFile)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		nsConnectionFileName := fmt.Sprintf("%v/%v", namespaceDir, "setup.json")
-		err = os.WriteFile(nsConnectionFileName, setupContent, 0777)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		fmt.Printf("Namespace %v successfully created!\n", alias)
+		createNamespace(alias, setupFile)
 	},
+}
+
+func createNamespace(alias string, setupFile string) {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal(err)
+	}
+	rttDir := fmt.Sprintf("%v/%v", homeDir, RTT_DIR)
+	_, err = os.Stat(rttDir)
+	if err != nil {
+		os.Mkdir(rttDir, 0777)
+	}
+
+	namespaceDir := fmt.Sprintf("%v/%v", rttDir, alias)
+	err = os.MkdirAll(namespaceDir, 0777)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	setupContent, err := os.ReadFile(setupFile)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	nsConnectionFileName := fmt.Sprintf("%v/%v", namespaceDir, "setup.json")
+	err = os.WriteFile(nsConnectionFileName, setupContent, 0777)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("Namespace %v successfully created!\n", alias)
 }
 
 func init() {
