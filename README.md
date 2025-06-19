@@ -92,6 +92,58 @@ To purge all messages from all queues just execute the purge command:
 rtt purge examples/setup.json
 ```
 
+## Namespaces
+
+`rtt` has namespaces that connects to specific environments defined by the user via `setup.json`. Those namespaces are referenced by an alias.
+You can also set a default namespace which has the advantage that you can omit the `setup.json` parameter to some calls.
+The namespace management is done via subcommands of a namespace command.
+
+### Creating a namespace
+
+To create an namespace you can call the create subcommand with an alias and a path to a setup.json.
+
+```sh
+rtt namespace create local ./examples/setup.json
+```
+
+### Updating a namespace
+
+To update the connection information or topology of a rabbit environment you can call the update subcommand with the alias and the new setup.json.
+
+```sh
+rtt namespace update local ./examples/setup.json
+```
+
+### List available namespaces
+
+To list all available namespace you can simply call the list subcommand.
+
+```sh
+rtt namespace list
+```
+
+### Set default namespace
+
+Call the set subcommand with an existing alias to set that namespace as a default namespace.
+
+```sh
+rtt namespace set local
+```
+
+### Delete a namespace
+
+To delete a namespace you can call the delete subcommand with the alias of the namespace to delete.
+
+```sh
+rtt namespace delete
+```
+
+### Commands that currently support namespaces
+
+You can omit the `setup.json` parameter to the following rtt commands if a default namespace is set:
+
+- purge
+
 ## File structures
 
 `rtt` handles two different configuration files, both written in json. One type is the `setup` file, that handles the rabbit topology and connection data.
