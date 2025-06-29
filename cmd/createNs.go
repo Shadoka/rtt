@@ -50,7 +50,7 @@ func createNamespace(alias string, setupFile string) {
 		log.Fatal(err)
 	}
 
-	nsConnectionFileName := fmt.Sprintf("%v/%v", namespaceDir, "setup.json")
+	nsConnectionFileName := fmt.Sprintf("%v/%v", namespaceDir, constants.SETUP_FILE_NAME)
 	err = os.WriteFile(nsConnectionFileName, setupContent, 0777)
 	if err != nil {
 		log.Fatal(err)

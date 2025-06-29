@@ -8,16 +8,11 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"rtt/constants"
 	"rtt/data"
 	"rtt/schemas"
 	"strings"
 )
-
-// TODO: Those will probably only work in MingW on Windows
-const RESET = "\033[0m"
-const RED = "\033[31m"
-const GREEN = "\033[32m"
-const CYAN = "\033[36m"
 
 var valResults []data.ValidationResult
 
@@ -164,7 +159,7 @@ type HandleFileResult interface {
 
 func IsPotentialTestFile(path string, d fs.DirEntry) bool {
 	return !d.IsDir() &&
-		d.Name() != "setup.json" &&
+		d.Name() != constants.SETUP_FILE_NAME &&
 		!strings.HasSuffix(path, ".schema.json") &&
 		strings.HasSuffix(path, ".json")
 }
@@ -173,29 +168,35 @@ func PrintValidationResults() {
 	fmt.Println("======= SCHEMA VALIDATION RESULTS  =======")
 
 	for _, result := range valResults {
-		fmt.Printf("%v%v%v:", CYAN, result.TestName, RESET)
+		fmt.Printf("%v%v%v:", constants.CYAN, result.TestName, constants.RESET)
 		if result.ValidationError == nil {
-			fmt.Printf("\t%vSUCCESS%v\n", GREEN, RESET)
+			fmt.Printf("\t%vSUCCESS%v\n", constants.GREEN, constants.RESET)
 		} else {
-			fmt.Printf("\t%vFAILURE%v\n", RED, RESET)
-			fmt.Printf("%v%v%v\n", RED, result.ValidationError, RESET)
+			fmt.Printf("\t%vFAILURE%v\n", constants.RED, constants.RESET)
+			fmt.Printf("%v%v%v\n", constants.RED, result.ValidationError, constants.RESET)
 		}
 	}
 }
 
 func PrintAssertionResult(assertionMessage string, successful bool) {
 	if successful {
-		fmt.Printf("%v%v%v\n", GREEN, assertionMessage, RESET)
+		fmt.Printf("%v%v%v\n", constants.GREEN, assertionMessage, constants.RESET)
 	} else {
-		fmt.Printf("%v%v%v\n", RED, assertionMessage, RESET)
+		fmt.Printf("%v%v%v\n", constants.RED, assertionMessage, constants.RESET)
 	}
 }
 
 func PrintConsumerResult(consumerResult data.ConsumerResult) {
 	if consumerResult.AssertionError == nil {
-		fmt.Printf("%v%v%v%v\n", GREEN, "Successfully received all messages of queue ", consumerResult.ConsumerQueue, RESET)
+		fmt.Printf("%vSuccessfully received all messages of queue '%v'%v\n",
+			constants.GREEN,
+			consumerResult.ConsumerQueue,
+			constants.RESET)
 	} else {
-		fmt.Printf("%v%v%v%v%v\n", RED, "Queue '", consumerResult.ConsumerQueue, "' has either not received all expected messages or had assertion errors", RESET)
+		fmt.Printf("%vQueue '%v'' has either not received all expected messages or had assertion errors%v\n",
+			constants.RED,
+			consumerResult.ConsumerQueue,
+			constants.RESET)
 	}
 }
 
