@@ -13,6 +13,21 @@ Additionally, if the consumer responds with a reply message it is possible to de
 
 The general connection information (credentials & rabbit connection data) are defined in a file called [setup.json](examples/setup.json). This file can also define the whole topology of the rabbit infrastructure and should be referenced from each rtt test file. This has the advantage of not duplicating the credentials for each test and also to create the rabbit topology independent of the execution of a test file.
 
+## Available commands
+
+| Command  | Description |
+| ------------- | ------------- |
+| [run](#running-tests)  | Run one or more test files  |
+| [validate](#validating-message-data)  | Validate message payloads against a schema  |
+| [setup](#creating-the-topology-or-just-testing-the-connection)  | Creates the RabbitMQ topology defined in a setup.json  |
+| [purge](#purging-messages)  | Purge messages from one or more queues  |
+| [peek](#peek-into-a-queue-non-consuming)  | Print out messages without consuming them  |
+| [namespace create](#creating-a-namespace)  | Create a namespace  |
+| [namespace update](#updating-a-namespace)  | Update a namespace  |
+| [namespace list](#list-available-namespaces)  | List available namespaces  |
+| [namespace set](#set-default-namespace)  | Set default namespace  |
+| [namespace delete](#delete-a-namespace)  | Delete a namespace  |
+
 ## Usage
 
 If you are on windows you have to replace 'rtt' with 'rtt.exe'.
