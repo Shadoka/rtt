@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"rtt/constants"
 	"rtt/rttio"
 
 	"github.com/spf13/cobra"
@@ -19,7 +20,7 @@ var listCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		rttDir := fmt.Sprintf("%v/%v", homeDir, RTT_DIR)
+		rttDir := fmt.Sprintf("%v/%v", homeDir, constants.RTT_DIR)
 		_, err = os.Stat(rttDir)
 		if err != nil {
 			log.Fatal("no namespaces available")
@@ -30,9 +31,9 @@ var listCmd = &cobra.Command{
 		amountDirs := 0
 		for _, ns := range namespaces {
 			amountDirs++
-			fmt.Printf("%v%v%v\n", PURPLE, ns, RESET)
+			fmt.Printf("%v%v%v\n", constants.PURPLE, ns, constants.RESET)
 		}
-		fmt.Printf("%v%v%v namespace(s) available\n", PURPLE, amountDirs, RESET)
+		fmt.Printf("%v%v%v namespace(s) available\n", constants.PURPLE, amountDirs, constants.RESET)
 	},
 }
 

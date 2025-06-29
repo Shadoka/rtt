@@ -4,13 +4,12 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"rtt/constants"
 	"rtt/data"
 	"rtt/rttio"
 
 	"github.com/spf13/cobra"
 )
-
-const PURPLE = "\033[35m"
 
 // setCmd represents the set command
 var setCmd = &cobra.Command{
@@ -45,7 +44,13 @@ var setCmd = &cobra.Command{
 		rttio.WriteConfigFile(rttConfig)
 
 		if previousAlias != "" {
-			fmt.Printf("Switched from %v%v%v to %v%v%v", PURPLE, previousAlias, RESET, PURPLE, args[0], RESET)
+			fmt.Printf("Switched from %v%v%v to %v%v%v",
+				constants.PURPLE,
+				previousAlias,
+				constants.RESET,
+				constants.PURPLE,
+				args[0],
+				constants.RESET)
 		}
 	},
 }

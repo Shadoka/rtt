@@ -92,6 +92,24 @@ To purge all messages from all queues just execute the purge command:
 rtt purge examples/setup.json
 ```
 
+### Peek into a queue (non-consuming)
+
+Use the `peek` subcommand if you want to see some of the first messages queued in a queue. Those messages will not be consumed by this action.
+`rtt` does not interpret the data and (currently) does not validate the payload against a possibly configured schema.
+
+By default `peek` will only print the first message in a queue and connects to the default namespace. You can change both those settings via
+parameters.
+
+Default (where `addition` is the name of the queue):
+```sh
+rtt peek addition
+```
+
+With parameters:
+```sh
+rtt peek addition -n 3 -s examples/setup.json
+```
+
 ## Namespaces
 
 `rtt` has namespaces that connects to specific environments defined by the user via `setup.json`. Those namespaces are referenced by an alias.

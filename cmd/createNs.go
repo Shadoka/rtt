@@ -4,12 +4,10 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"rtt/constants"
 
 	"github.com/spf13/cobra"
 )
-
-const RTT_DIR = ".rtt"
-const RTT_CONF = ".rttconf"
 
 // createCmd represents the create command
 var createCmd = &cobra.Command{
@@ -35,7 +33,7 @@ func createNamespace(alias string, setupFile string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	rttDir := fmt.Sprintf("%v/%v", homeDir, RTT_DIR)
+	rttDir := fmt.Sprintf("%v/%v", homeDir, constants.RTT_DIR)
 	_, err = os.Stat(rttDir)
 	if err != nil {
 		os.Mkdir(rttDir, 0777)

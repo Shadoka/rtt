@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"os"
+	"rtt/constants"
 	"rtt/rabbit"
 	"rtt/rttio"
 
@@ -11,11 +11,6 @@ import (
 )
 
 var setupToUse string
-
-// TODO: duplicated from rttio
-const RESET = "\033[0m"
-const RED = "\033[31m"
-const GREEN = "\033[32m"
 
 // purgeCmd represents the purge command
 var purgeCmd = &cobra.Command{
@@ -26,18 +21,7 @@ var purgeCmd = &cobra.Command{
 	If you don't select a specific queue all messages from all queues defined in the namespace will be purged.
 	You can select a specific environment by using the -s parameter to give a path to a setup.json file`,
 	Run: func(cmd *cobra.Command, args []string) {
-		var setupFile string
-		if setupToUse != "" {
-			setupFile = setupToUse
-		} else {
-			setupFile = rttio.LoadConfigFile().DefaultNamespaceSetup
-		}
-
-		_, err := os.Stat(setupFile)
-		if err != nil {
-			_, _ = fmt.Fprintf(os.Stderr, "no file found at '%v'\n", setupFile)
-			os.Exit(1)
-		}
+		setupFile := VerifyFile(setupToUse)
 
 		var queueToPurge string
 		if len(args) != 0 {
@@ -76,15 +60,15 @@ func purgeMessagesFromQueues(queues []string, channel *amqp091.Channel) {
 		if err != nil {
 			fmt.Printf("%v: %v%v%v\n",
 				q,
-				RED,
+				constants.RED,
 				err,
-				RESET)
+				constants.RESET)
 		} else {
 			fmt.Printf("%v: %v%v message(s) purged%v\n",
 				q,
-				GREEN,
+				constants.GREEN,
 				purgedMessagesAmount,
-				RESET)
+				constants.RESET)
 		}
 	}
 }

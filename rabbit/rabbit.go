@@ -1,6 +1,7 @@
 package rabbit
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -58,6 +59,23 @@ func DeclareQueue(queueInfo *data.RabbitQueue, ch *amqp.Channel) amqp.Queue {
 	return queue
 }
 
+func GetPassiveQueue(queueName string, ch *amqp.Channel) amqp.Queue {
+	// only queue name matters
+	queue, err := ch.QueueDeclarePassive(
+		queueName,
+		false,
+		false,
+		false,
+		false,
+		nil)
+	if err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, "Unable to get queue: %v", err)
+		os.Exit(1)
+	}
+
+	return queue
+}
+
 func BindQueue(queueInfo *data.RabbitQueue, ch *amqp.Channel) {
 	err := ch.QueueBind(queueInfo.Name,
 		queueInfo.Key,
@@ -112,7 +130,23 @@ func SendMessage(data data.InputQueue, channel *amqp.Channel) {
 func CreateConsumer(channel *amqp.Channel, queueInfo *data.RabbitQueue) <-chan amqp.Delivery {
 	msgs, err := channel.Consume(queueInfo.Name,
 		uuid.NewString(),
-		true, // autoAck sensible default?
+		true,
+		queueInfo.Exclusive,
+		false, // noLocal unsupported by RabbitMQ
+		queueInfo.NoWait,
+		nil)
+	if err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, "cannot create consumer: %v", err)
+		os.Exit(1)
+	}
+	return msgs
+}
+
+func CreateConsumerWithConfiguration(channel *amqp.Channel, queueInfo *data.RabbitQueue, ack bool, ctx context.Context) <-chan amqp.Delivery {
+	msgs, err := channel.ConsumeWithContext(ctx,
+		queueInfo.Name,
+		uuid.NewString(),
+		ack,
 		queueInfo.Exclusive,
 		false, // noLocal unsupported by RabbitMQ
 		queueInfo.NoWait,

@@ -1,6 +1,9 @@
 package data
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"slices"
+)
 
 // FILE STRUCTURES
 
@@ -15,6 +18,21 @@ type SetupFile struct {
 	Exchanges  []RabbitExchange `json:"exchanges"`
 	Queues     []RabbitQueue    `json:"queues"`
 	Connection Connection       `json:"connection"`
+}
+
+func (namespace *SetupFile) ContainsQueue(queueName string) bool {
+	return slices.ContainsFunc(namespace.Queues, func(q RabbitQueue) bool {
+		return q.Name == queueName
+	})
+}
+
+func (namespace *SetupFile) GetQueueInfo(queueName string) *RabbitQueue {
+	for _, rq := range namespace.Queues {
+		if rq.Name == queueName {
+			return &rq
+		}
+	}
+	return nil
 }
 
 type ConfigFile struct {
