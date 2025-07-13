@@ -9,6 +9,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var setupLocation string
+
 // namespaceCmd represents the namespace command
 var namespaceCmd = &cobra.Command{
 	Use:   "namespace",
@@ -38,4 +40,6 @@ func GetDefaultSetupFile() *data.SetupFile {
 
 func init() {
 	rootCmd.AddCommand(namespaceCmd)
+
+	peekCmd.Flags().StringVarP(&setupLocation, "setup", "s", "", "Setup file to use for rabbit connection")
 }

@@ -200,6 +200,11 @@ func PrintConsumerResult(consumerResult data.ConsumerResult) {
 	}
 }
 
+// see constants.go for available colors
+func PrintlnInColor(toPrint string, color string) {
+	fmt.Printf("%v%v%v\n", color, toPrint, constants.RESET)
+}
+
 func AppendValidationResult(result data.ValidationResult) {
 	valResults = append(valResults, result)
 }

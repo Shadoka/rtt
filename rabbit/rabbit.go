@@ -127,6 +127,22 @@ func SendMessage(data data.InputQueue, channel *amqp.Channel) {
 	}
 }
 
+func SendTextMessage(payload string, queue *data.RabbitQueue, channel *amqp.Channel) {
+	msgId := uuid.New().String()
+	err := channel.Publish(queue.Exchange,
+		queue.Key,
+		false,
+		false,
+		amqp.Publishing{
+			ContentType: "application/octet-stream",
+			Body:        []byte(payload),
+			MessageId:   msgId,
+		})
+	if err != nil {
+		log.Fatalf("Unable to publish message in queue '%v': %v", queue.Name, err)
+	}
+}
+
 func CreateConsumer(channel *amqp.Channel, queueInfo *data.RabbitQueue) <-chan amqp.Delivery {
 	msgs, err := channel.Consume(queueInfo.Name,
 		uuid.NewString(),

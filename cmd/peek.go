@@ -17,7 +17,6 @@ import (
 )
 
 var peekAmount int
-var setupLocation string
 
 // peekCmd represents the peek command
 var peekCmd = &cobra.Command{
@@ -31,7 +30,8 @@ var peekCmd = &cobra.Command{
 	Example: rtt peek <queue> (-n 10 -s examples/setup.json)`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) != 1 {
-			fmt.Printf("This command requires the name of a queue as parameter")
+			fmt.Println("This command requires the name of a queue as parameter")
+			os.Exit(1)
 		}
 
 		setupFile := VerifyFile(setupLocation)
@@ -79,5 +79,4 @@ func init() {
 	rootCmd.AddCommand(peekCmd)
 
 	peekCmd.Flags().IntVarP(&peekAmount, "amount", "n", 1, "Amount of messages to peek into")
-	peekCmd.Flags().StringVarP(&setupLocation, "setup", "s", "", "Setup file to use for rabbit connection")
 }

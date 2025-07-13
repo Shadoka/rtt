@@ -22,6 +22,7 @@ The general connection information (credentials & rabbit connection data) are de
 | [setup](#creating-the-topology-or-just-testing-the-connection)  | Creates the RabbitMQ topology defined in a setup.json  |
 | [purge](#purging-messages)  | Purge messages from one or more queues  |
 | [peek](#peek-into-a-queue-non-consuming)  | Print out messages without consuming them  |
+| [send](#send-a-message)  | Sends a message to a queue  |
 | [namespace create](#creating-a-namespace)  | Create a namespace  |
 | [namespace update](#updating-a-namespace)  | Update a namespace  |
 | [namespace list](#list-available-namespaces)  | List available namespaces  |
@@ -109,7 +110,7 @@ rtt purge examples/setup.json
 
 ### Peek into a queue (non-consuming)
 
-Use the `peek` subcommand if you want to see some of the first messages queued in a queue. Those messages will not be consumed by this action.
+Use the `peek` command if you want to see some of the first messages queued in a queue. Those messages will not be consumed by this action.
 `rtt` does not interpret the data and (currently) does not validate the payload against a possibly configured schema.
 
 By default `peek` will only print the first message in a queue and connects to the default namespace. You can change both those settings via
@@ -123,6 +124,14 @@ rtt peek addition
 With parameters:
 ```sh
 rtt peek addition -n 3 -s examples/setup.json
+```
+
+### Send a message
+
+With the `send` command you can send a single message into a specified queue. You can use the default namespace or specify a setup.json file.
+
+```sh
+rtt send addition '{"someKey":"someValue"}'
 ```
 
 ## Namespaces
