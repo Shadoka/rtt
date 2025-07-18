@@ -9,3 +9,6 @@ const CYAN = "\033[36m"
 const RTT_DIR = ".rtt"
 const RTT_CONF = ".rttconf"
 const SETUP_FILE_NAME = "setup.json"
+
+const ENV_VAR_PREFIX = "$("
+const ENV_VAR_SUFFIX = ")"

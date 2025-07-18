@@ -2,7 +2,10 @@ package data
 
 import (
 	"encoding/json"
+	"os"
+	"rtt/constants"
 	"slices"
+	"strings"
 )
 
 // FILE STRUCTURES
@@ -47,6 +50,26 @@ type Connection struct {
 	Port     string `json:"port"`
 	User     string `json:"user"`
 	Password string `json:"password"`
+}
+
+func (c *Connection) UnmarshalJSON(text []byte) error {
+	type dummy Connection
+	d := dummy{}
+
+	if err := json.Unmarshal(text, &d); err != nil {
+		return err
+	}
+
+	if strings.HasPrefix(d.User, constants.ENV_VAR_PREFIX) {
+		d.User = GetEnvVar(d.User)
+	}
+
+	if strings.HasPrefix(d.Password, constants.ENV_VAR_PREFIX) {
+		d.Password = GetEnvVar(d.Password)
+	}
+
+	*c = Connection(d)
+	return nil
 }
 
 type RabbitExchange struct {
@@ -142,4 +165,12 @@ func (r *Response) UnmarshalJSON(text []byte) error {
 
 	*r = Response(opts)
 	return nil
+}
+
+// util - cant go into rttio because of cycles
+
+func GetEnvVar(rawEnvVar string) string {
+	noPrefix, _ := strings.CutPrefix(rawEnvVar, constants.ENV_VAR_PREFIX)
+	noSuffix, _ := strings.CutSuffix(noPrefix, constants.ENV_VAR_SUFFIX)
+	return os.Getenv(noSuffix)
 }
