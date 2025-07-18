@@ -134,6 +134,12 @@ With the `send` command you can send a single message into a specified queue. Yo
 rtt send addition '{"someKey":"someValue"}'
 ```
 
+The -s parameter is supported to supply a specific namespace:
+
+```sh
+rtt send addition '{"someKey":"someValue"}' -s examples/setup.json
+```
+
 ## Namespaces
 
 `rtt` has namespaces that connects to specific environments defined by the user via `setup.json`. Those namespaces are referenced by an alias.

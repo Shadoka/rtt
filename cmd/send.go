@@ -19,7 +19,7 @@ var sendCmd = &cobra.Command{
 	Use:   "send",
 	Short: "Sends a message to a queue",
 	Long: `Sends a message to a queue.
-	Use -f to specify a setup.json or use the default namespace
+	Use -s to specify a setup.json or use the default namespace
 	Example: rtt send queueName '{"someKey":"someValue"}'`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) != 2 {
