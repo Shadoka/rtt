@@ -275,6 +275,7 @@ In the `setup.json` you can use environment variables as substitutes for the cre
         "password": "$(RABBIT_PASSWORD)"
     }
 }
+```
 
 ### Creating a queue with additional arguments
 
