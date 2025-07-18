@@ -263,6 +263,19 @@ go build
 
 ## Examples
 
+### Use environment variables for username and password
+
+In the `setup.json` you can use environment variables as substitutes for the credentials:
+```json
+{
+    "connection": {
+        "host": "localhost",
+        "port": "5672",
+        "user": "$(RABBIT_USER)",
+        "password": "$(RABBIT_PASSWORD)"
+    }
+}
+
 ### Creating a queue with additional arguments
 
 ```json
