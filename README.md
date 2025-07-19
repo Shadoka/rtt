@@ -15,19 +15,19 @@ The general connection information (credentials & rabbit connection data) are de
 
 ## Available commands
 
-| Command  | Description |
-| ------------- | ------------- |
-| [run](#running-tests)  | Run one or more test files  |
-| [validate](#validating-message-data)  | Validate message payloads against a schema  |
-| [setup](#creating-the-topology-or-just-testing-the-connection)  | Creates the RabbitMQ topology defined in a setup.json  |
-| [purge](#purging-messages)  | Purge messages from one or more queues  |
-| [peek](#peek-into-a-queue-non-consuming)  | Print out messages without consuming them  |
-| [send](#send-a-message)  | Sends a message to a queue  |
-| [namespace create](#creating-a-namespace)  | Create a namespace  |
-| [namespace update](#updating-a-namespace)  | Update a namespace  |
-| [namespace list](#list-available-namespaces)  | List available namespaces  |
-| [namespace set](#set-default-namespace)  | Set default namespace  |
-| [namespace delete](#delete-a-namespace)  | Delete a namespace  |
+| Command  | Description | Uses namespaces? |
+| ------------- | ------------- | ------------- |
+| [run](#running-tests)  | Run one or more test files  | :x: |
+| [validate](#validating-message-data)  | Validate message payloads against a schema  | :x: |
+| [setup](#creating-the-topology-or-just-testing-the-connection)  | Creates the RabbitMQ topology defined in a setup.json  | :x: |
+| [purge](#purging-messages)  | Purge messages from one or more queues  | :white_check_mark: |
+| [peek](#peek-into-a-queue-non-consuming)  | Print out messages without consuming them  | :white_check_mark: |
+| [send](#send-a-message)  | Sends a message to a queue  | :white_check_mark: |
+| [namespace create](#creating-a-namespace)  | Create a namespace  | NA |
+| [namespace update](#updating-a-namespace)  | Update a namespace  | NA |
+| [namespace list](#list-available-namespaces)  | List available namespaces  | NA |
+| [namespace set](#set-default-namespace)  | Set default namespace  | NA |
+| [namespace delete](#delete-a-namespace)  | Delete a namespace  | NA |
 
 ## Usage
 
@@ -124,6 +124,11 @@ rtt peek addition
 With parameters:
 ```sh
 rtt peek addition -n 3 -s examples/setup.json
+```
+
+Use -b to only get the body, useful for piping the data into a file. A line break is added after the body by `rtt`.
+```sh
+rtt peek addition -b > body.json
 ```
 
 ### Send a message

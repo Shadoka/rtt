@@ -17,6 +17,7 @@ import (
 )
 
 var peekAmount int
+var bodyOnly bool
 
 // peekCmd represents the peek command
 var peekCmd = &cobra.Command{
@@ -65,8 +66,12 @@ func peek(queueName string, namespace data.SetupFile) {
 		payload := string(msg.Body)
 		msgId := msg.MessageId
 
-		fmt.Printf("%vMessageId%v: %v\n", constants.PURPLE, constants.RESET, msgId)
-		fmt.Printf("%vPayload%v:\n%v\n", constants.PURPLE, constants.RESET, payload)
+		if bodyOnly {
+			fmt.Println(payload)
+		} else {
+			fmt.Printf("%vMessageId%v: %v\n", constants.PURPLE, constants.RESET, msgId)
+			fmt.Printf("%vPayload%v:\n%v\n", constants.PURPLE, constants.RESET, payload)
+		}
 		peekedMsgs++
 
 		if peekedMsgs == peekAmount {
@@ -79,4 +84,5 @@ func init() {
 	rootCmd.AddCommand(peekCmd)
 
 	peekCmd.Flags().IntVarP(&peekAmount, "amount", "n", 1, "Amount of messages to peek into")
+	peekCmd.Flags().BoolVarP(&bodyOnly, "body", "b", false, "Output message body only")
 }
