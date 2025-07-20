@@ -32,6 +32,13 @@ var sendCmd = &cobra.Command{
 		queueName := args[0]
 		payload := args[1]
 		namespace := rttio.LoadSetupFile(setupFile)
+
+		if namespace.Protected {
+			if !rttio.ConfirmAction() {
+				os.Exit(0)
+			}
+		}
+
 		if namespace.ContainsQueue(queueName) {
 			send(payload, queueName, namespace)
 		} else {

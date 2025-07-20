@@ -1,6 +1,7 @@
 package rttio
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -198,6 +199,17 @@ func PrintConsumerResult(consumerResult data.ConsumerResult) {
 			consumerResult.ConsumerQueue,
 			constants.RESET)
 	}
+}
+
+func ConfirmAction() bool {
+	buf := bufio.NewReader(os.Stdin)
+	fmt.Print("Execute command in protected namespace? (y)/n: ")
+	response, err := buf.ReadString('\n')
+	if err != nil {
+		panic(err)
+	}
+	response = strings.ToLower(strings.TrimSpace(response))
+	return response == "y" || response == ""
 }
 
 // see constants.go for available colors

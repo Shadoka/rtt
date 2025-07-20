@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 	"rtt/constants"
 	"rtt/rabbit"
 	"rtt/rttio"
@@ -34,6 +35,12 @@ var purgeCmd = &cobra.Command{
 
 func purgeMessages(setupFile string, queueToPurge string) {
 	setupData := rttio.LoadSetupFile(setupFile)
+
+	if setupData.Protected {
+		if !rttio.ConfirmAction() {
+			os.Exit(0)
+		}
+	}
 
 	conn := rabbit.Connect(setupData.Connection.Host, setupData.Connection.Port, setupData.Connection.User, setupData.Connection.Password)
 	defer conn.Close()

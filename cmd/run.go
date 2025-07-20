@@ -143,6 +143,13 @@ func runFile(filename string) data.ValidationResult {
 
 	connectionFileLocation := fmt.Sprintf("%v/%v", rttFilePath, rttFile.ConnectionFile)
 	connectionFile := rttio.LoadSetupFile(connectionFileLocation)
+
+	if connectionFile.Protected {
+		if !rttio.ConfirmAction() {
+			os.Exit(0)
+		}
+	}
+
 	rabbitConnection := rabbit.Connect(connectionFile.Connection.Host,
 		connectionFile.Connection.Port,
 		connectionFile.Connection.User,

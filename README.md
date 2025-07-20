@@ -266,7 +266,7 @@ go get
 go build
 ```
 
-## Examples
+## Additional features/information
 
 ### Use environment variables for username and password
 
@@ -279,6 +279,22 @@ In the `setup.json` you can use environment variables as substitutes for the cre
         "user": "$(RABBIT_USER)",
         "password": "$(RABBIT_PASSWORD)"
     }
+}
+```
+
+### Protect a namespace
+
+In order to prevent accidental data loss, data impurities or accidental changes to the topology
+it is possible to protect a namespace in the `setup.json`. That leads to a confirmation prompt
+when executing mutating commands.
+```json
+{
+    "exchanges": [],
+    "queues": [],
+    "connection": {
+        "...": "...",
+    },
+    "protected": true
 }
 ```
 

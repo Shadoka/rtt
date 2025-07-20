@@ -21,6 +21,7 @@ type SetupFile struct {
 	Exchanges  []RabbitExchange `json:"exchanges"`
 	Queues     []RabbitQueue    `json:"queues"`
 	Connection Connection       `json:"connection"`
+	Protected  bool             `json:"protected"`
 }
 
 func (namespace *SetupFile) ContainsQueue(queueName string) bool {

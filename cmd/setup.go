@@ -39,6 +39,12 @@ func SetupRabbitFromFile(fileName string) data.Connection {
 	VerbosePrintln(fmt.Sprintf("Loading setup data from '%v'", fileName))
 	setupData := rttio.LoadSetupFile(fileName)
 
+	if setupData.Protected {
+		if !rttio.ConfirmAction() {
+			os.Exit(0)
+		}
+	}
+
 	conn := rabbit.Connect(setupData.Connection.Host, setupData.Connection.Port, setupData.Connection.User, setupData.Connection.Password)
 	defer conn.Close()
 	ch := rabbit.GetChannel(conn)
