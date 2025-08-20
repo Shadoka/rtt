@@ -14,6 +14,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var amount int
+
 // sendCmd represents the send command
 var sendCmd = &cobra.Command{
 	Use:   "send",
@@ -56,11 +58,14 @@ func send(payload string, queueName string, namespace data.SetupFile) {
 
 	queueInfo := namespace.GetQueueInfo(queueName)
 
-	rabbit.SendTextMessage(payload, queueInfo, ch)
+	for i := 0; i < amount; i++ {
+		rabbit.SendTextMessage(payload, queueInfo, ch)
+	}
 
 	rttio.PrintlnInColor(fmt.Sprintf("Successfully sent message to queue '%v'!", queueName), constants.GREEN)
 }
 
 func init() {
 	rootCmd.AddCommand(sendCmd)
+	sendCmd.Flags().IntVarP(&amount, "amount", "n", 1, "Amount of messages to be sent")
 }

@@ -144,12 +144,19 @@ The -s parameter is supported to supply a specific namespace:
 ```sh
 rtt send addition '{"someKey":"someValue"}' -s examples/setup.json
 ```
+To send a specified number of copies of that message you can use the -n parameter:
+
+```sh
+rtt send addition '{"someKey":"someValue"}' -n 200
+```
 
 ## Namespaces
 
 `rtt` has namespaces that connects to specific environments defined by the user via `setup.json`. Those namespaces are referenced by an alias.
 You can also set a default namespace which has the advantage that you can omit the `setup.json` parameter to some calls.
 The namespace management is done via subcommands of a namespace command.
+
+Those namespaces are saved in your home directory in a directory called `.rtt`.
 
 ### Creating a namespace
 
@@ -190,12 +197,6 @@ To delete a namespace you can call the delete subcommand with the alias of the n
 ```sh
 rtt namespace delete
 ```
-
-### Commands that currently support namespaces
-
-You can omit the `setup.json` parameter to the following rtt commands if a default namespace is set:
-
-- purge
 
 ## File structures
 
