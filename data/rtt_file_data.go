@@ -39,6 +39,16 @@ func (namespace *SetupFile) GetQueueInfo(queueName string) *RabbitQueue {
 	return nil
 }
 
+func (namespace *SetupFile) GetQueuesInExchange(exchange string) []BindingQueuePair {
+	queuesInExchange := make([]BindingQueuePair, 0)
+	for _, v := range namespace.Queues {
+		if v.Exchange == exchange {
+			queuesInExchange = append(queuesInExchange, BindingQueuePair{v.Key, v.Name})
+		}
+	}
+	return queuesInExchange
+}
+
 type ConfigFile struct {
 	DefaultNamespaceSetup string `json:"defaultNamespaceSetup"`
 	DefaultNamespaceAlias string `json:"defaultNamespaceAlias"`
@@ -71,6 +81,11 @@ func (c *Connection) UnmarshalJSON(text []byte) error {
 
 	*c = Connection(d)
 	return nil
+}
+
+type BindingQueuePair struct {
+	Binding   string
+	QueueName string
 }
 
 type RabbitExchange struct {

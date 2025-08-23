@@ -28,6 +28,7 @@ The general connection information (credentials & rabbit connection data) are de
 | [namespace list](#list-available-namespaces)  | List available namespaces  | NA |
 | [namespace set](#set-default-namespace)  | Set default namespace  | NA |
 | [namespace delete](#delete-a-namespace)  | Delete a namespace  | NA |
+| [namespace show](#show-namespace-content)  | Shows exchanges, queues and their bindings  | :white_check_mark: |
 
 ## Usage
 
@@ -133,7 +134,7 @@ rtt peek addition -b > body.json
 
 ### Send a message
 
-With the `send` command you can send a single message into a specified queue. You can use the default namespace or specify a setup.json file.
+With the `send` command you can send a single message (or more copies of that message) into a specified queue. You can use the default namespace or specify a setup.json file.
 
 ```sh
 rtt send addition '{"someKey":"someValue"}'
@@ -196,6 +197,15 @@ To delete a namespace you can call the delete subcommand with the alias of the n
 
 ```sh
 rtt namespace delete
+```
+
+### Show namespace content
+
+You can let `rtt` print out the exchanges and their queues with binding keys.
+Works with the default namespace.
+
+```sh
+rtt namespace show
 ```
 
 ## File structures
